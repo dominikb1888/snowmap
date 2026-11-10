@@ -10,12 +10,12 @@
     "test": "node --test"
   },
   "dependencies": {
-    "@observablehq/framework": "^1.13.4"
+    "@observablehq/framework": "^1.10.1"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "globals": "^17.14.0",
-    "rimraf": "^5.0.5"
+    "rimraf": "^6.1.4"
   },
   "engines": {
     "node": ">=18"
