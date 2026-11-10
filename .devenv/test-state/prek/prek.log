@@ -1,61 +1,61 @@
-2026-11-10T15:16:21.188964Z DEBUG prek: 0.5.5
-2026-11-10T15:16:21.189014Z DEBUG Args: ["/nix/store/l0ggvqg03zd6if8h8qi39r66chdhcf04-prek-0.5.5/bin/prek", "run", "-a", "-c", "/home/dominikb1888/Semester/snowmap/.pre-commit-config.yaml"]
-2026-11-10T15:16:21.191064Z DEBUG discover{cwd="/home/dominikb1888/Semester/snowmap"}: Git repository state state=Repo { root: Ok("/home/dominikb1888/Semester/snowmap"), git_dir: "/home/dominikb1888/Semester/snowmap/.git", common_dir: "/home/dominikb1888/Semester/snowmap/.git", hooks_dir: "/home/dominikb1888/Semester/snowmap/.git/hooks" }
-2026-11-10T15:16:21.191130Z TRACE discover{cwd="/home/dominikb1888/Semester/snowmap"}: close time.busy=2.07ms time.idle=5.06µs
-2026-11-10T15:16:21.191156Z TRACE Searching for global config path=/home/dominikb1888/.config/prek/prek.toml
-2026-11-10T15:16:21.191170Z TRACE Global config not found or inaccessible, skipping path=/home/dominikb1888/.config/prek/prek.toml
-2026-11-10T15:16:21.191187Z TRACE Include selectors: ``
-2026-11-10T15:16:21.191193Z TRACE Skip selectors: ``
-2026-11-10T15:16:21.191215Z DEBUG discover{root="/home/dominikb1888/Semester/snowmap" config=Some("/home/dominikb1888/Semester/snowmap/.pre-commit-config.yaml") refresh=false}: Loading project configuration path=.pre-commit-config.yaml
-2026-11-10T15:16:21.192263Z TRACE discover{root="/home/dominikb1888/Semester/snowmap" config=Some("/home/dominikb1888/Semester/snowmap/.pre-commit-config.yaml") refresh=false}: close time.busy=1.05ms time.idle=2.50µs
-2026-11-10T15:16:21.192693Z TRACE Checking lock resource="store" path=/home/dominikb1888/Semester/snowmap/.devenv/test-state/prek/.lock
-2026-11-10T15:16:21.192722Z DEBUG Acquired lock resource="store"
-2026-11-10T15:16:21.192890Z TRACE Released lock path=/home/dominikb1888/Semester/snowmap/.devenv/test-state/prek/.lock
-2026-11-10T15:16:21.192917Z DEBUG Hooks going to run: ["check-merge-conflicts", "eslint", "prettier"]
-2026-11-10T15:16:21.192946Z TRACE ls_files{cwd="/home/dominikb1888/Semester/snowmap"}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/xqp1x3qm8j8hxqpddwzp9mg73wvrc4xb-git-2.56.0/bin/git -c core.useBuiltinFSMonitor=false --literal-pathspecs ls-files -z -- /home/dominikb1888/Semester/snowmap`
-2026-11-10T15:16:21.201724Z TRACE ls_files{cwd="/home/dominikb1888/Semester/snowmap"}: close time.busy=899µs time.idle=7.89ms
-2026-11-10T15:16:21.201769Z DEBUG All files in the workspace: 77
-2026-11-10T15:16:21.202828Z ERROR Failed to get tags filename="src/data/John_Snow_1854_cases.xlsx" error=failed to query metadata of symlink `src/data/John_Snow_1854_cases.xlsx`: No such file or directory (os error 2)
-2026-11-10T15:16:21.202973Z TRACE Files for project `.` after filtered: 77
-2026-11-10T15:16:21.202994Z TRACE diff_worktree{path="/home/dominikb1888/Semester/snowmap"}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/xqp1x3qm8j8hxqpddwzp9mg73wvrc4xb-git-2.56.0/bin/git -c core.useBuiltinFSMonitor=false diff --full-index --no-ext-diff --no-textconv --ignore-submodules -- /home/dominikb1888/Semester/snowmap`
-2026-11-10T15:16:21.219055Z TRACE diff_worktree{path="/home/dominikb1888/Semester/snowmap"}: close time.busy=2.93ms time.idle=13.1ms
-2026-11-10T15:16:21.219086Z DEBUG Running priority group with priority 0: ["check-merge-conflicts"]
-2026-11-10T15:16:21.219123Z TRACE matching_filenames{hook="check-merge-conflicts"}: close time.busy=22.3µs time.idle=375ns
-2026-11-10T15:16:21.219137Z TRACE Files for hook `check-merge-conflicts` after filtering matched=true filenames=50
-2026-11-10T15:16:21.219202Z TRACE run{hook_id=check-merge-conflicts language=system}: Found shebang: ["/nix/store/czx7cscpnqqmc9nwmbpnv2zcvck64mmf-bash-5.3p20/bin/bash", "-e"]
-2026-11-10T15:16:21.219372Z TRACE run{hook_id=check-merge-conflicts language=system}: Running check-merge-conflicts total_files=50 concurrency=16
-2026-11-10T15:16:21.219410Z TRACE run{hook_id=check-merge-conflicts language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/czx7cscpnqqmc9nwmbpnv2zcvck64mmf-bash-5.3p20/bin/bash -e /nix/store/ijy3ng8p1m4jpgjx5larp84i532xl54m-python3.14-pre-commit-hooks-6.0.0/bin/check-merge-conflict`
-2026-11-10T15:16:21.219614Z TRACE run{hook_id=check-merge-conflicts language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/czx7cscpnqqmc9nwmbpnv2zcvck64mmf-bash-5.3p20/bin/bash -e /nix/store/ijy3ng8p1m4jpgjx5larp84i532xl54m-python3.14-pre-commit-hooks-6.0.0/bin/check-merge-conflict`
-2026-11-10T15:16:21.219765Z TRACE run{hook_id=check-merge-conflicts language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/czx7cscpnqqmc9nwmbpnv2zcvck64mmf-bash-5.3p20/bin/bash -e /nix/store/ijy3ng8p1m4jpgjx5larp84i532xl54m-python3.14-pre-commit-hooks-6.0.0/bin/check-merge-conflict`
-2026-11-10T15:16:21.221689Z TRACE run{hook_id=check-merge-conflicts language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/czx7cscpnqqmc9nwmbpnv2zcvck64mmf-bash-5.3p20/bin/bash -e /nix/store/ijy3ng8p1m4jpgjx5larp84i532xl54m-python3.14-pre-commit-hooks-6.0.0/bin/check-merge-conflict`
-2026-11-10T15:16:21.225599Z TRACE run{hook_id=check-merge-conflicts language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/czx7cscpnqqmc9nwmbpnv2zcvck64mmf-bash-5.3p20/bin/bash -e /nix/store/ijy3ng8p1m4jpgjx5larp84i532xl54m-python3.14-pre-commit-hooks-6.0.0/bin/check-merge-conflict`
-2026-11-10T15:16:21.225783Z TRACE run{hook_id=check-merge-conflicts language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/czx7cscpnqqmc9nwmbpnv2zcvck64mmf-bash-5.3p20/bin/bash -e /nix/store/ijy3ng8p1m4jpgjx5larp84i532xl54m-python3.14-pre-commit-hooks-6.0.0/bin/check-merge-conflict`
-2026-11-10T15:16:21.225890Z TRACE run{hook_id=check-merge-conflicts language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/czx7cscpnqqmc9nwmbpnv2zcvck64mmf-bash-5.3p20/bin/bash -e /nix/store/ijy3ng8p1m4jpgjx5larp84i532xl54m-python3.14-pre-commit-hooks-6.0.0/bin/check-merge-conflict`
-2026-11-10T15:16:21.226122Z TRACE run{hook_id=check-merge-conflicts language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/czx7cscpnqqmc9nwmbpnv2zcvck64mmf-bash-5.3p20/bin/bash -e /nix/store/ijy3ng8p1m4jpgjx5larp84i532xl54m-python3.14-pre-commit-hooks-6.0.0/bin/check-merge-conflict`
-2026-11-10T15:16:21.229720Z TRACE run{hook_id=check-merge-conflicts language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/czx7cscpnqqmc9nwmbpnv2zcvck64mmf-bash-5.3p20/bin/bash -e /nix/store/ijy3ng8p1m4jpgjx5larp84i532xl54m-python3.14-pre-commit-hooks-6.0.0/bin/check-merge-conflict`
-2026-11-10T15:16:21.230015Z TRACE run{hook_id=check-merge-conflicts language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/czx7cscpnqqmc9nwmbpnv2zcvck64mmf-bash-5.3p20/bin/bash -e /nix/store/ijy3ng8p1m4jpgjx5larp84i532xl54m-python3.14-pre-commit-hooks-6.0.0/bin/check-merge-conflict`
-2026-11-10T15:16:21.230191Z TRACE run{hook_id=check-merge-conflicts language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/czx7cscpnqqmc9nwmbpnv2zcvck64mmf-bash-5.3p20/bin/bash -e /nix/store/ijy3ng8p1m4jpgjx5larp84i532xl54m-python3.14-pre-commit-hooks-6.0.0/bin/check-merge-conflict`
-2026-11-10T15:16:21.231933Z TRACE run{hook_id=check-merge-conflicts language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/czx7cscpnqqmc9nwmbpnv2zcvck64mmf-bash-5.3p20/bin/bash -e /nix/store/ijy3ng8p1m4jpgjx5larp84i532xl54m-python3.14-pre-commit-hooks-6.0.0/bin/check-merge-conflict`
-2026-11-10T15:16:21.232112Z TRACE run{hook_id=check-merge-conflicts language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/czx7cscpnqqmc9nwmbpnv2zcvck64mmf-bash-5.3p20/bin/bash -e /nix/store/ijy3ng8p1m4jpgjx5larp84i532xl54m-python3.14-pre-commit-hooks-6.0.0/bin/check-merge-conflict`
-2026-11-10T15:16:21.336190Z  INFO run{hook_id=check-merge-conflicts language=system}: close time.busy=13.7ms time.idle=103ms
-2026-11-10T15:16:21.336258Z TRACE diff_worktree{path="/home/dominikb1888/Semester/snowmap"}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/xqp1x3qm8j8hxqpddwzp9mg73wvrc4xb-git-2.56.0/bin/git -c core.useBuiltinFSMonitor=false diff --full-index --no-ext-diff --no-textconv --ignore-submodules -- /home/dominikb1888/Semester/snowmap`
-2026-11-10T15:16:21.350800Z TRACE diff_worktree{path="/home/dominikb1888/Semester/snowmap"}: close time.busy=718µs time.idle=13.8ms
-2026-11-10T15:16:21.350896Z DEBUG Running priority group with priority 1: ["eslint"]
-2026-11-10T15:16:21.350937Z TRACE matching_filenames{hook="eslint"}: close time.busy=25.0µs time.idle=625ns
-2026-11-10T15:16:21.350954Z TRACE Files for hook `eslint` after filtering matched=true filenames=3
-2026-11-10T15:16:21.351019Z TRACE run{hook_id=eslint language=system}: Found shebang: ["/nix/store/czx7cscpnqqmc9nwmbpnv2zcvck64mmf-bash-5.3p20/bin/bash", "-e"]
-2026-11-10T15:16:21.351106Z TRACE run{hook_id=eslint language=system}: Running eslint total_files=3 concurrency=16
-2026-11-10T15:16:21.351144Z TRACE run{hook_id=eslint language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/czx7cscpnqqmc9nwmbpnv2zcvck64mmf-bash-5.3p20/bin/bash -e /nix/store/9ylfc94hmlixljhysmrzcsjfqcz5bgwz-eslint-10.12.0/bin/eslint --fix`
-2026-11-10T15:16:21.561086Z  INFO run{hook_id=eslint language=system}: close time.busy=504µs time.idle=210ms
-2026-11-10T15:16:21.561186Z TRACE diff_worktree{path="/home/dominikb1888/Semester/snowmap"}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/xqp1x3qm8j8hxqpddwzp9mg73wvrc4xb-git-2.56.0/bin/git -c core.useBuiltinFSMonitor=false diff --full-index --no-ext-diff --no-textconv --ignore-submodules -- /home/dominikb1888/Semester/snowmap`
-2026-11-10T15:16:21.575529Z TRACE diff_worktree{path="/home/dominikb1888/Semester/snowmap"}: close time.busy=602µs time.idle=13.8ms
-2026-11-10T15:16:21.575598Z DEBUG Running priority group with priority 2: ["prettier"]
-2026-11-10T15:16:21.575675Z TRACE matching_filenames{hook="prettier"}: close time.busy=62.7µs time.idle=417ns
-2026-11-10T15:16:21.575691Z TRACE Files for hook `prettier` after filtering matched=true filenames=10
-2026-11-10T15:16:21.575812Z TRACE run{hook_id=prettier language=system}: Running prettier total_files=10 concurrency=16
-2026-11-10T15:16:21.575846Z TRACE run{hook_id=prettier language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/l8s3f7pw67g841af622n2ghvl8msksfy-prettier-3.9.10/bin/prettier --ignore-unknown --list-different --write`
-2026-11-10T15:16:21.576803Z TRACE run{hook_id=prettier language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/l8s3f7pw67g841af622n2ghvl8msksfy-prettier-3.9.10/bin/prettier --ignore-unknown --list-different --write`
-2026-11-10T15:16:21.577002Z TRACE run{hook_id=prettier language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/l8s3f7pw67g841af622n2ghvl8msksfy-prettier-3.9.10/bin/prettier --ignore-unknown --list-different --write`
-2026-11-10T15:16:21.779543Z  INFO run{hook_id=prettier language=system}: close time.busy=1.82ms time.idle=202ms
-2026-11-10T15:16:21.779671Z TRACE diff_worktree{path="/home/dominikb1888/Semester/snowmap"}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/xqp1x3qm8j8hxqpddwzp9mg73wvrc4xb-git-2.56.0/bin/git -c core.useBuiltinFSMonitor=false diff --full-index --no-ext-diff --no-textconv --ignore-submodules -- /home/dominikb1888/Semester/snowmap`
-2026-11-10T15:16:21.818690Z TRACE diff_worktree{path="/home/dominikb1888/Semester/snowmap"}: close time.busy=3.32ms time.idle=35.7ms
+2026-11-10T15:17:00.422444Z DEBUG prek: 0.5.5
+2026-11-10T15:17:00.422478Z DEBUG Args: ["/nix/store/l0ggvqg03zd6if8h8qi39r66chdhcf04-prek-0.5.5/bin/prek", "run", "-a", "-c", "/home/dominikb1888/Semester/snowmap/.pre-commit-config.yaml"]
+2026-11-10T15:17:00.427001Z DEBUG discover{cwd="/home/dominikb1888/Semester/snowmap"}: Git repository state state=Repo { root: Ok("/home/dominikb1888/Semester/snowmap"), git_dir: "/home/dominikb1888/Semester/snowmap/.git", common_dir: "/home/dominikb1888/Semester/snowmap/.git", hooks_dir: "/home/dominikb1888/Semester/snowmap/.git/hooks" }
+2026-11-10T15:17:00.427062Z TRACE discover{cwd="/home/dominikb1888/Semester/snowmap"}: close time.busy=4.54ms time.idle=4.18µs
+2026-11-10T15:17:00.427086Z TRACE Searching for global config path=/home/dominikb1888/.config/prek/prek.toml
+2026-11-10T15:17:00.427095Z TRACE Global config not found or inaccessible, skipping path=/home/dominikb1888/.config/prek/prek.toml
+2026-11-10T15:17:00.427111Z TRACE Include selectors: ``
+2026-11-10T15:17:00.427116Z TRACE Skip selectors: ``
+2026-11-10T15:17:00.427134Z DEBUG discover{root="/home/dominikb1888/Semester/snowmap" config=Some("/home/dominikb1888/Semester/snowmap/.pre-commit-config.yaml") refresh=false}: Loading project configuration path=.pre-commit-config.yaml
+2026-11-10T15:17:00.427896Z TRACE discover{root="/home/dominikb1888/Semester/snowmap" config=Some("/home/dominikb1888/Semester/snowmap/.pre-commit-config.yaml") refresh=false}: close time.busy=764µs time.idle=1.12µs
+2026-11-10T15:17:00.428685Z TRACE Checking lock resource="store" path=/home/dominikb1888/Semester/snowmap/.devenv/test-state/prek/.lock
+2026-11-10T15:17:00.428708Z DEBUG Acquired lock resource="store"
+2026-11-10T15:17:00.428852Z TRACE Released lock path=/home/dominikb1888/Semester/snowmap/.devenv/test-state/prek/.lock
+2026-11-10T15:17:00.428876Z DEBUG Hooks going to run: ["check-merge-conflicts", "eslint", "prettier"]
+2026-11-10T15:17:00.428900Z TRACE ls_files{cwd="/home/dominikb1888/Semester/snowmap"}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/xqp1x3qm8j8hxqpddwzp9mg73wvrc4xb-git-2.56.0/bin/git -c core.useBuiltinFSMonitor=false --literal-pathspecs ls-files -z -- /home/dominikb1888/Semester/snowmap`
+2026-11-10T15:17:00.431337Z TRACE ls_files{cwd="/home/dominikb1888/Semester/snowmap"}: close time.busy=1.91ms time.idle=538µs
+2026-11-10T15:17:00.431369Z DEBUG All files in the workspace: 84
+2026-11-10T15:17:00.432420Z TRACE Files for project `.` after filtered: 84
+2026-11-10T15:17:00.432456Z TRACE diff_worktree{path="/home/dominikb1888/Semester/snowmap"}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/xqp1x3qm8j8hxqpddwzp9mg73wvrc4xb-git-2.56.0/bin/git -c core.useBuiltinFSMonitor=false diff --full-index --no-ext-diff --no-textconv --ignore-submodules -- /home/dominikb1888/Semester/snowmap`
+2026-11-10T15:17:00.440361Z TRACE diff_worktree{path="/home/dominikb1888/Semester/snowmap"}: close time.busy=2.97ms time.idle=4.94ms
+2026-11-10T15:17:00.440396Z DEBUG Running priority group with priority 0: ["check-merge-conflicts"]
+2026-11-10T15:17:00.440437Z TRACE matching_filenames{hook="check-merge-conflicts"}: close time.busy=24.4µs time.idle=375ns
+2026-11-10T15:17:00.440452Z TRACE Files for hook `check-merge-conflicts` after filtering matched=true filenames=55
+2026-11-10T15:17:00.440527Z TRACE run{hook_id=check-merge-conflicts language=system}: Found shebang: ["/nix/store/czx7cscpnqqmc9nwmbpnv2zcvck64mmf-bash-5.3p20/bin/bash", "-e"]
+2026-11-10T15:17:00.440721Z TRACE run{hook_id=check-merge-conflicts language=system}: Running check-merge-conflicts total_files=55 concurrency=16
+2026-11-10T15:17:00.440768Z TRACE run{hook_id=check-merge-conflicts language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/czx7cscpnqqmc9nwmbpnv2zcvck64mmf-bash-5.3p20/bin/bash -e /nix/store/ijy3ng8p1m4jpgjx5larp84i532xl54m-python3.14-pre-commit-hooks-6.0.0/bin/check-merge-conflict`
+2026-11-10T15:17:00.443847Z TRACE run{hook_id=check-merge-conflicts language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/czx7cscpnqqmc9nwmbpnv2zcvck64mmf-bash-5.3p20/bin/bash -e /nix/store/ijy3ng8p1m4jpgjx5larp84i532xl54m-python3.14-pre-commit-hooks-6.0.0/bin/check-merge-conflict`
+2026-11-10T15:17:00.446811Z TRACE run{hook_id=check-merge-conflicts language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/czx7cscpnqqmc9nwmbpnv2zcvck64mmf-bash-5.3p20/bin/bash -e /nix/store/ijy3ng8p1m4jpgjx5larp84i532xl54m-python3.14-pre-commit-hooks-6.0.0/bin/check-merge-conflict`
+2026-11-10T15:17:00.447737Z TRACE run{hook_id=check-merge-conflicts language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/czx7cscpnqqmc9nwmbpnv2zcvck64mmf-bash-5.3p20/bin/bash -e /nix/store/ijy3ng8p1m4jpgjx5larp84i532xl54m-python3.14-pre-commit-hooks-6.0.0/bin/check-merge-conflict`
+2026-11-10T15:17:00.449725Z TRACE run{hook_id=check-merge-conflicts language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/czx7cscpnqqmc9nwmbpnv2zcvck64mmf-bash-5.3p20/bin/bash -e /nix/store/ijy3ng8p1m4jpgjx5larp84i532xl54m-python3.14-pre-commit-hooks-6.0.0/bin/check-merge-conflict`
+2026-11-10T15:17:00.450732Z TRACE run{hook_id=check-merge-conflicts language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/czx7cscpnqqmc9nwmbpnv2zcvck64mmf-bash-5.3p20/bin/bash -e /nix/store/ijy3ng8p1m4jpgjx5larp84i532xl54m-python3.14-pre-commit-hooks-6.0.0/bin/check-merge-conflict`
+2026-11-10T15:17:00.451720Z TRACE run{hook_id=check-merge-conflicts language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/czx7cscpnqqmc9nwmbpnv2zcvck64mmf-bash-5.3p20/bin/bash -e /nix/store/ijy3ng8p1m4jpgjx5larp84i532xl54m-python3.14-pre-commit-hooks-6.0.0/bin/check-merge-conflict`
+2026-11-10T15:17:00.455683Z TRACE run{hook_id=check-merge-conflicts language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/czx7cscpnqqmc9nwmbpnv2zcvck64mmf-bash-5.3p20/bin/bash -e /nix/store/ijy3ng8p1m4jpgjx5larp84i532xl54m-python3.14-pre-commit-hooks-6.0.0/bin/check-merge-conflict`
+2026-11-10T15:17:00.458664Z TRACE run{hook_id=check-merge-conflicts language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/czx7cscpnqqmc9nwmbpnv2zcvck64mmf-bash-5.3p20/bin/bash -e /nix/store/ijy3ng8p1m4jpgjx5larp84i532xl54m-python3.14-pre-commit-hooks-6.0.0/bin/check-merge-conflict`
+2026-11-10T15:17:00.458757Z TRACE run{hook_id=check-merge-conflicts language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/czx7cscpnqqmc9nwmbpnv2zcvck64mmf-bash-5.3p20/bin/bash -e /nix/store/ijy3ng8p1m4jpgjx5larp84i532xl54m-python3.14-pre-commit-hooks-6.0.0/bin/check-merge-conflict`
+2026-11-10T15:17:00.466671Z TRACE run{hook_id=check-merge-conflicts language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/czx7cscpnqqmc9nwmbpnv2zcvck64mmf-bash-5.3p20/bin/bash -e /nix/store/ijy3ng8p1m4jpgjx5larp84i532xl54m-python3.14-pre-commit-hooks-6.0.0/bin/check-merge-conflict`
+2026-11-10T15:17:00.469662Z TRACE run{hook_id=check-merge-conflicts language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/czx7cscpnqqmc9nwmbpnv2zcvck64mmf-bash-5.3p20/bin/bash -e /nix/store/ijy3ng8p1m4jpgjx5larp84i532xl54m-python3.14-pre-commit-hooks-6.0.0/bin/check-merge-conflict`
+2026-11-10T15:17:00.470719Z TRACE run{hook_id=check-merge-conflicts language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/czx7cscpnqqmc9nwmbpnv2zcvck64mmf-bash-5.3p20/bin/bash -e /nix/store/ijy3ng8p1m4jpgjx5larp84i532xl54m-python3.14-pre-commit-hooks-6.0.0/bin/check-merge-conflict`
+2026-11-10T15:17:00.471707Z TRACE run{hook_id=check-merge-conflicts language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/czx7cscpnqqmc9nwmbpnv2zcvck64mmf-bash-5.3p20/bin/bash -e /nix/store/ijy3ng8p1m4jpgjx5larp84i532xl54m-python3.14-pre-commit-hooks-6.0.0/bin/check-merge-conflict`
+2026-11-10T15:17:00.566388Z  INFO run{hook_id=check-merge-conflicts language=system}: close time.busy=33.2ms time.idle=92.8ms
+2026-11-10T15:17:00.566480Z TRACE diff_worktree{path="/home/dominikb1888/Semester/snowmap"}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/xqp1x3qm8j8hxqpddwzp9mg73wvrc4xb-git-2.56.0/bin/git -c core.useBuiltinFSMonitor=false diff --full-index --no-ext-diff --no-textconv --ignore-submodules -- /home/dominikb1888/Semester/snowmap`
+2026-11-10T15:17:00.571171Z TRACE diff_worktree{path="/home/dominikb1888/Semester/snowmap"}: close time.busy=547µs time.idle=4.15ms
+2026-11-10T15:17:00.571252Z DEBUG Running priority group with priority 1: ["eslint"]
+2026-11-10T15:17:00.571299Z TRACE matching_filenames{hook="eslint"}: close time.busy=30.7µs time.idle=334ns
+2026-11-10T15:17:00.571315Z TRACE Files for hook `eslint` after filtering matched=true filenames=4
+2026-11-10T15:17:00.571382Z TRACE run{hook_id=eslint language=system}: Found shebang: ["/nix/store/czx7cscpnqqmc9nwmbpnv2zcvck64mmf-bash-5.3p20/bin/bash", "-e"]
+2026-11-10T15:17:00.571472Z TRACE run{hook_id=eslint language=system}: Running eslint total_files=4 concurrency=16
+2026-11-10T15:17:00.571510Z TRACE run{hook_id=eslint language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/czx7cscpnqqmc9nwmbpnv2zcvck64mmf-bash-5.3p20/bin/bash -e /nix/store/9ylfc94hmlixljhysmrzcsjfqcz5bgwz-eslint-10.12.0/bin/eslint --fix`
+2026-11-10T15:17:00.824945Z  INFO run{hook_id=eslint language=system}: close time.busy=566µs time.idle=253ms
+2026-11-10T15:17:00.825058Z TRACE diff_worktree{path="/home/dominikb1888/Semester/snowmap"}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/xqp1x3qm8j8hxqpddwzp9mg73wvrc4xb-git-2.56.0/bin/git -c core.useBuiltinFSMonitor=false diff --full-index --no-ext-diff --no-textconv --ignore-submodules -- /home/dominikb1888/Semester/snowmap`
+2026-11-10T15:17:00.829729Z TRACE diff_worktree{path="/home/dominikb1888/Semester/snowmap"}: close time.busy=460µs time.idle=4.23ms
+2026-11-10T15:17:00.829785Z DEBUG Running priority group with priority 2: ["prettier"]
+2026-11-10T15:17:00.829823Z TRACE matching_filenames{hook="prettier"}: close time.busy=25.2µs time.idle=625ns
+2026-11-10T15:17:00.829839Z TRACE Files for hook `prettier` after filtering matched=true filenames=12
+2026-11-10T15:17:00.829960Z TRACE run{hook_id=prettier language=system}: Running prettier total_files=12 concurrency=16
+2026-11-10T15:17:00.829992Z TRACE run{hook_id=prettier language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/l8s3f7pw67g841af622n2ghvl8msksfy-prettier-3.9.10/bin/prettier --ignore-unknown --list-different --write`
+2026-11-10T15:17:00.830174Z TRACE run{hook_id=prettier language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/l8s3f7pw67g841af622n2ghvl8msksfy-prettier-3.9.10/bin/prettier --ignore-unknown --list-different --write`
+2026-11-10T15:17:00.830333Z TRACE run{hook_id=prettier language=system}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/l8s3f7pw67g841af622n2ghvl8msksfy-prettier-3.9.10/bin/prettier --ignore-unknown --list-different --write`
+2026-11-10T15:17:01.051801Z  INFO run{hook_id=prettier language=system}: close time.busy=1.82ms time.idle=220ms
+2026-11-10T15:17:01.051920Z TRACE diff_worktree{path="/home/dominikb1888/Semester/snowmap"}: Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/xqp1x3qm8j8hxqpddwzp9mg73wvrc4xb-git-2.56.0/bin/git -c core.useBuiltinFSMonitor=false diff --full-index --no-ext-diff --no-textconv --ignore-submodules -- /home/dominikb1888/Semester/snowmap`
+2026-11-10T15:17:01.057457Z TRACE diff_worktree{path="/home/dominikb1888/Semester/snowmap"}: close time.busy=463µs time.idle=5.09ms
