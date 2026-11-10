@@ -1,0 +1,937 @@
+/**
+ * Bundled by jsDelivr using Rollup v4.62.2 and esbuild v0.28.1.
+ * Original file: /npm/wkt-parser@1.7.0/index.js
+ *
+ * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+ */
+class H {
+  static getId(e) {
+    const a = e.find((n) => Array.isArray(n) && n[0] === "ID");
+    return a && a.length >= 3
+      ? { authority: a[1], code: parseInt(a[2], 10) }
+      : null;
+  }
+  static convertUnit(e, a = "unit") {
+    if (!e || e.length < 3)
+      return { type: a, name: "unknown", conversion_factor: null };
+    const n = e[1],
+      f = parseFloat(e[2]) || null,
+      r = e.find((s) => Array.isArray(s) && s[0] === "ID"),
+      o = r ? { authority: r[1], code: parseInt(r[2], 10) } : null;
+    return { type: a, name: n, conversion_factor: f, id: o };
+  }
+  static convertAxis(e) {
+    const a = e[1] || "Unknown";
+    let n;
+    const f = a.match(/^\((.)\)$/);
+    if (f) {
+      const d = f[1].toUpperCase();
+      if (d === "E") n = "east";
+      else if (d === "N") n = "north";
+      else if (d === "U") n = "up";
+      else if (e[2]) n = e[2];
+      else throw new Error(`Unknown axis abbreviation: ${d}`);
+    } else n = e[2] || "unknown";
+    const r = e.find((d) => Array.isArray(d) && d[0] === "ORDER"),
+      o = r ? parseInt(r[1], 10) : null,
+      s = e.find(
+        (d) =>
+          Array.isArray(d) &&
+          (d[0] === "LENGTHUNIT" ||
+            d[0] === "ANGLEUNIT" ||
+            d[0] === "SCALEUNIT"),
+      ),
+      m = this.convertUnit(s);
+    return { name: a, direction: n, unit: m, order: o };
+  }
+  static extractAxes(e) {
+    return e
+      .filter((a) => Array.isArray(a) && a[0] === "AXIS")
+      .map((a) => this.convertAxis(a))
+      .sort((a, n) => (a.order || 0) - (n.order || 0));
+  }
+  static convert(e, a = {}) {
+    switch (e[0]) {
+      case "PROJCRS":
+        ((a.type = "ProjectedCRS"),
+          (a.name = e[1]),
+          (a.base_crs = e.find(
+            (t) => Array.isArray(t) && t[0] === "BASEGEOGCRS",
+          )
+            ? this.convert(
+                e.find((t) => Array.isArray(t) && t[0] === "BASEGEOGCRS"),
+              )
+            : null),
+          (a.conversion = e.find(
+            (t) => Array.isArray(t) && t[0] === "CONVERSION",
+          )
+            ? this.convert(
+                e.find((t) => Array.isArray(t) && t[0] === "CONVERSION"),
+              )
+            : null));
+        const n = e.find((t) => Array.isArray(t) && t[0] === "CS");
+        n &&
+          (a.coordinate_system = { subtype: n[1], axis: this.extractAxes(e) });
+        const f = e.find((t) => Array.isArray(t) && t[0] === "LENGTHUNIT");
+        if (f) {
+          const t = this.convertUnit(f);
+          a.coordinate_system.unit = t;
+        }
+        a.id = this.getId(e);
+        break;
+      case "BASEGEOGCRS":
+      case "GEOGCRS":
+      case "GEODCRS":
+        ((a.type = e[0] === "GEODCRS" ? "GeodeticCRS" : "GeographicCRS"),
+          (a.name = e[1]));
+        const r = e.find(
+          (t) => Array.isArray(t) && (t[0] === "DATUM" || t[0] === "ENSEMBLE"),
+        );
+        if (r) {
+          const t = this.convert(r);
+          r[0] === "ENSEMBLE" ? (a.datum_ensemble = t) : (a.datum = t);
+          const l = e.find((S) => Array.isArray(S) && S[0] === "PRIMEM");
+          l &&
+            l[1] !== "Greenwich" &&
+            (t.prime_meridian = { name: l[1], longitude: parseFloat(l[2]) });
+        }
+        const o = e.find((t) => Array.isArray(t) && t[0] === "CS");
+        ((a.coordinate_system = {
+          subtype: o ? o[1] : "ellipsoidal",
+          axis: this.extractAxes(e),
+        }),
+          (a.id = this.getId(e)));
+        break;
+      case "DATUM":
+        ((a.type = "GeodeticReferenceFrame"),
+          (a.name = e[1]),
+          (a.ellipsoid = e.find((t) => Array.isArray(t) && t[0] === "ELLIPSOID")
+            ? this.convert(
+                e.find((t) => Array.isArray(t) && t[0] === "ELLIPSOID"),
+              )
+            : null));
+        break;
+      case "ENSEMBLE":
+        ((a.type = "DatumEnsemble"),
+          (a.name = e[1]),
+          (a.members = e
+            .filter((t) => Array.isArray(t) && t[0] === "MEMBER")
+            .map((t) => ({
+              type: "DatumEnsembleMember",
+              name: t[1],
+              id: this.getId(t),
+            }))));
+        const s = e.find(
+          (t) => Array.isArray(t) && t[0] === "ENSEMBLEACCURACY",
+        );
+        s && (a.accuracy = parseFloat(s[1]));
+        const m = e.find((t) => Array.isArray(t) && t[0] === "ELLIPSOID");
+        (m && (a.ellipsoid = this.convert(m)), (a.id = this.getId(e)));
+        break;
+      case "ELLIPSOID":
+        ((a.type = "Ellipsoid"),
+          (a.name = e[1]),
+          (a.semi_major_axis = parseFloat(e[2])),
+          (a.inverse_flattening = parseFloat(e[3])),
+          e.find((t) => Array.isArray(t) && t[0] === "LENGTHUNIT") &&
+            this.convert(
+              e.find((t) => Array.isArray(t) && t[0] === "LENGTHUNIT"),
+              a,
+            ));
+        break;
+      case "CONVERSION":
+        ((a.type = "Conversion"),
+          (a.name = e[1]),
+          (a.method = e.find((t) => Array.isArray(t) && t[0] === "METHOD")
+            ? this.convert(e.find((t) => Array.isArray(t) && t[0] === "METHOD"))
+            : null),
+          (a.parameters = e
+            .filter((t) => Array.isArray(t) && t[0] === "PARAMETER")
+            .map((t) => this.convert(t))));
+        break;
+      case "METHOD":
+        ((a.type = "Method"), (a.name = e[1]), (a.id = this.getId(e)));
+        break;
+      case "PARAMETER":
+        ((a.type = "Parameter"),
+          (a.name = e[1]),
+          (a.value = parseFloat(e[2])),
+          (a.unit = this.convertUnit(
+            e.find(
+              (t) =>
+                Array.isArray(t) &&
+                (t[0] === "LENGTHUNIT" ||
+                  t[0] === "ANGLEUNIT" ||
+                  t[0] === "SCALEUNIT"),
+            ),
+          )),
+          (a.id = this.getId(e)));
+        break;
+      case "COMPOUNDCRS":
+        ((a.type = "CompoundCRS"),
+          (a.name = e[1]),
+          (a.components = e
+            .slice(2)
+            .filter((t) => Array.isArray(t) && t[0].endsWith("CRS"))
+            .map((t) => this.convert(t))),
+          (a.id = this.getId(e)));
+        break;
+      case "BOUNDCRS":
+        a.type = "BoundCRS";
+        const d = e.find((t) => Array.isArray(t) && t[0] === "SOURCECRS");
+        if (d) {
+          const t = d.find((l) => Array.isArray(l));
+          a.source_crs = t ? this.convert(t) : null;
+        }
+        const p = e.find((t) => Array.isArray(t) && t[0] === "TARGETCRS");
+        if (p) {
+          const t = p.find((l) => Array.isArray(l));
+          a.target_crs = t ? this.convert(t) : null;
+        }
+        const A = e.find(
+          (t) => Array.isArray(t) && t[0] === "ABRIDGEDTRANSFORMATION",
+        );
+        A ? (a.transformation = this.convert(A)) : (a.transformation = null);
+        break;
+      case "ABRIDGEDTRANSFORMATION":
+        if (
+          ((a.type = "Transformation"),
+          (a.name = e[1]),
+          (a.method = e.find((t) => Array.isArray(t) && t[0] === "METHOD")
+            ? this.convert(e.find((t) => Array.isArray(t) && t[0] === "METHOD"))
+            : null),
+          (a.parameters = e
+            .filter(
+              (t) =>
+                Array.isArray(t) &&
+                (t[0] === "PARAMETER" || t[0] === "PARAMETERFILE"),
+            )
+            .map((t) => {
+              if (t[0] === "PARAMETER") return this.convert(t);
+              if (t[0] === "PARAMETERFILE")
+                return {
+                  name: t[1],
+                  value: t[2],
+                  id: { authority: "EPSG", code: 8656 },
+                };
+            })),
+          a.parameters.length === 7)
+        ) {
+          const t = a.parameters[6];
+          t.name === "Scale difference" &&
+            (t.value = Math.round((t.value - 1) * 1e12) / 1e6);
+        }
+        a.id = this.getId(e);
+        break;
+      case "AXIS":
+        (a.coordinate_system ||
+          (a.coordinate_system = { type: "unspecified", axis: [] }),
+          a.coordinate_system.axis.push(this.convertAxis(e)));
+        break;
+      case "LENGTHUNIT":
+        const g = this.convertUnit(e, "LinearUnit");
+        (a.coordinate_system &&
+          a.coordinate_system.axis &&
+          a.coordinate_system.axis.forEach((t) => {
+            t.unit || (t.unit = g);
+          }),
+          g.conversion_factor &&
+            g.conversion_factor !== 1 &&
+            a.semi_major_axis &&
+            (a.semi_major_axis = { value: a.semi_major_axis, unit: g }));
+        break;
+      default:
+        a.keyword = e[0];
+        break;
+    }
+    return a;
+  }
+}
+function O(i) {
+  i[0] = i[0].toUpperCase();
+  for (var e = 1; e < i.length; e++) Array.isArray(i[e]) && O(i[e]);
+}
+var F = {
+  GEODETICCRS: "GEODCRS",
+  GEOGRAPHICCRS: "GEOGCRS",
+  PROJECTEDCRS: "PROJCRS",
+  GEODETICDATUM: "DATUM",
+  TRF: "DATUM",
+  SPHEROID: "ELLIPSOID",
+  PRIMEMERIDIAN: "PRIMEM",
+  PROJECTION: "METHOD",
+  VERTICALCRS: "VERTCRS",
+  VERTICALDATUM: "VDATUM",
+  VRF: "VDATUM",
+  ENGINEERINGCRS: "ENGCRS",
+  ENGINEERINGDATUM: "EDATUM",
+  PARAMETRICDATUM: "PDATUM",
+  TIMEDATUM: "TDATUM",
+  TEMPORALQUANTITY: "TIMEUNIT",
+};
+function I(i) {
+  i[0] = F[i[0]] || i[0];
+  for (var e = 1; e < i.length; e++) Array.isArray(i[e]) && I(i[e]);
+}
+function J(i) {
+  return (O(i), I(i), H.convert(i));
+}
+function B(i) {
+  const e = i.toUpperCase();
+  return e.includes("PROJCRS") ||
+    e.includes("GEOGCRS") ||
+    e.includes("BOUNDCRS") ||
+    e.includes("VERTCRS") ||
+    e.includes("LENGTHUNIT") ||
+    e.includes("ANGLEUNIT") ||
+    e.includes("SCALEUNIT")
+    ? "WKT2"
+    : (e.includes("PROJCS") ||
+        e.includes("GEOGCS") ||
+        e.includes("LOCAL_CS") ||
+        e.includes("VERT_CS") ||
+        e.includes("UNIT"),
+      "WKT1");
+}
+var E = 1,
+  N = 2,
+  D = 3,
+  h = 4,
+  M = 5,
+  R = -1,
+  V = /\s/,
+  z = /[A-Za-z]/,
+  W = /[A-Za-z84_]/,
+  y = /[,\])]/,
+  U = /[\d\.E\-\+]/;
+function _(i) {
+  if (typeof i != "string") throw new Error("not a string");
+  ((this.text = i.trim()),
+    (this.level = 0),
+    (this.place = 0),
+    (this.root = null),
+    (this.stack = []),
+    (this.currentObject = null),
+    (this.state = E));
+}
+((_.prototype.readCharicter = function () {
+  var i = this.text[this.place++];
+  if (this.state !== h)
+    for (; V.test(i);) {
+      if (this.place >= this.text.length) return;
+      i = this.text[this.place++];
+    }
+  switch (this.state) {
+    case E:
+      return this.neutral(i);
+    case N:
+      return this.keyword(i);
+    case h:
+      return this.quoted(i);
+    case M:
+      return this.afterquote(i);
+    case D:
+      return this.number(i);
+    case R:
+      return;
+  }
+}),
+  (_.prototype.afterquote = function (i) {
+    if (i === '"') {
+      ((this.word += '"'), (this.state = h));
+      return;
+    }
+    if (y.test(i)) {
+      ((this.word = this.word.trim()), this.afterItem(i));
+      return;
+    }
+    throw new Error(
+      `havn't handled "` + i + '" in afterquote yet, index ' + this.place,
+    );
+  }),
+  (_.prototype.afterItem = function (i) {
+    if (i === ",") {
+      (this.word !== null && this.currentObject.push(this.word),
+        (this.word = null),
+        (this.state = E));
+      return;
+    }
+    if (i === "]" || i === ")") {
+      (this.level--,
+        this.word !== null &&
+          (this.currentObject.push(this.word), (this.word = null)),
+        (this.state = E),
+        (this.currentObject = this.stack.pop()),
+        this.currentObject || (this.state = R));
+      return;
+    }
+  }),
+  (_.prototype.number = function (i) {
+    if (U.test(i)) {
+      this.word += i;
+      return;
+    }
+    if (y.test(i)) {
+      ((this.word = parseFloat(this.word)), this.afterItem(i));
+      return;
+    }
+    throw new Error(
+      `havn't handled "` + i + '" in number yet, index ' + this.place,
+    );
+  }),
+  (_.prototype.quoted = function (i) {
+    if (i === '"') {
+      this.state = M;
+      return;
+    }
+    this.word += i;
+  }),
+  (_.prototype.keyword = function (i) {
+    if (W.test(i)) {
+      this.word += i;
+      return;
+    }
+    if (i === "[" || i === "(") {
+      var e = [];
+      (e.push(this.word),
+        this.level++,
+        this.root === null ? (this.root = e) : this.currentObject.push(e),
+        this.stack.push(this.currentObject),
+        (this.currentObject = e),
+        (this.state = E));
+      return;
+    }
+    if (y.test(i)) {
+      this.afterItem(i);
+      return;
+    }
+    throw new Error(
+      `havn't handled "` + i + '" in keyword yet, index ' + this.place,
+    );
+  }),
+  (_.prototype.neutral = function (i) {
+    if (z.test(i)) {
+      ((this.word = i), (this.state = N));
+      return;
+    }
+    if (i === '"') {
+      ((this.word = ""), (this.state = h));
+      return;
+    }
+    if (U.test(i)) {
+      ((this.word = i), (this.state = D));
+      return;
+    }
+    if (y.test(i)) {
+      this.afterItem(i);
+      return;
+    }
+    throw new Error(
+      `havn't handled "` + i + '" in neutral yet, index ' + this.place,
+    );
+  }),
+  (_.prototype.output = function () {
+    for (; this.place < this.text.length;) this.readCharicter();
+    if (this.state === R) return this.root;
+    throw new Error(
+      'unable to parse string "' + this.text + '". State is ' + this.state,
+    );
+  }));
+function K(i) {
+  var e = new _(i);
+  return e.output();
+}
+function T(i, e, a) {
+  Array.isArray(e) && (a.unshift(e), (e = null));
+  var n = e ? {} : i,
+    f = a.reduce(function (r, o) {
+      return (u(o, r), r);
+    }, n);
+  e && (i[e] = f);
+}
+function u(i, e) {
+  if (!Array.isArray(i)) {
+    e[i] = !0;
+    return;
+  }
+  var a = i.shift();
+  if ((a === "PARAMETER" && (a = i.shift()), i.length === 1)) {
+    if (Array.isArray(i[0])) {
+      ((e[a] = {}), u(i[0], e[a]));
+      return;
+    }
+    e[a] = i[0];
+    return;
+  }
+  if (!i.length) {
+    e[a] = !0;
+    return;
+  }
+  if (a === "TOWGS84") {
+    e[a] = i;
+    return;
+  }
+  if (a === "AXIS") {
+    (a in e || (e[a] = []), e[a].push(i));
+    return;
+  }
+  Array.isArray(a) || (e[a] = {});
+  var n;
+  switch (a) {
+    case "UNIT":
+    case "PRIMEM":
+    case "VERT_DATUM":
+      ((e[a] = { name: i[0].toLowerCase(), convert: i[1] }),
+        i.length === 3 && u(i[2], e[a]));
+      return;
+    case "SPHEROID":
+    case "ELLIPSOID":
+      ((e[a] = { name: i[0], a: i[1], rf: i[2] }),
+        i.length === 4 && u(i[3], e[a]));
+      return;
+    case "EDATUM":
+    case "ENGINEERINGDATUM":
+    case "LOCAL_DATUM":
+    case "DATUM":
+    case "VERT_CS":
+    case "VERTCRS":
+    case "VERTICALCRS":
+      ((i[0] = ["name", i[0]]), T(e, a, i));
+      return;
+    case "COMPD_CS":
+    case "COMPOUNDCRS":
+    case "FITTED_CS":
+    case "PROJECTEDCRS":
+    case "PROJCRS":
+    case "GEOGCS":
+    case "GEOCCS":
+    case "PROJCS":
+    case "LOCAL_CS":
+    case "GEODCRS":
+    case "GEODETICCRS":
+    case "GEODETICDATUM":
+    case "ENGCRS":
+    case "ENGINEERINGCRS":
+      ((i[0] = ["name", i[0]]), T(e, a, i), (e[a].type = a));
+      return;
+    default:
+      for (n = -1; ++n < i.length;) if (!Array.isArray(i[n])) return u(i, e[a]);
+      return T(e, a, i);
+  }
+}
+var X = 0.017453292519943295;
+function c(i) {
+  return i * X;
+}
+function G(i) {
+  const e = (i.projName || "").toLowerCase().replace(/_/g, " ");
+  (i.long0 === void 0 && i.longc !== void 0 && (i.long0 = i.longc),
+    !i.lat_ts &&
+    i.lat1 &&
+    (e === "stereographic south pole" ||
+      e === "polar stereographic (variant b)")
+      ? ((i.lat0 = c(i.lat1 > 0 ? 90 : -90)),
+        (i.lat_ts = i.lat1),
+        delete i.lat1)
+      : !i.lat_ts &&
+        i.lat0 &&
+        (e === "polar stereographic" ||
+          e === "polar stereographic (variant a)") &&
+        ((i.lat_ts = i.lat0),
+        (i.lat0 = c(i.lat0 > 0 ? 90 : -90)),
+        delete i.lat1));
+}
+function v(i) {
+  let e = { units: null, to_meter: void 0 };
+  return (
+    typeof i == "string"
+      ? ((e.units = i.toLowerCase()),
+        e.units === "metre" && (e.units = "meter"),
+        e.units === "meter" && (e.to_meter = 1))
+      : i &&
+        i.name &&
+        ((e.units = i.name.toLowerCase()),
+        e.units === "metre" && (e.units = "meter"),
+        (e.to_meter = i.conversion_factor)),
+    e
+  );
+}
+function P(i) {
+  return typeof i == "object" ? i.value * i.unit.conversion_factor : i;
+}
+function L(i, e) {
+  i.ellipsoid.radius
+    ? ((e.a = i.ellipsoid.radius), (e.rf = 0))
+    : ((e.a = P(i.ellipsoid.semi_major_axis)),
+      i.ellipsoid.inverse_flattening !== void 0
+        ? (e.rf = i.ellipsoid.inverse_flattening)
+        : i.ellipsoid.semi_major_axis !== void 0 &&
+          i.ellipsoid.semi_minor_axis !== void 0 &&
+          (e.rf = e.a / (e.a - P(i.ellipsoid.semi_minor_axis))));
+}
+function b(i) {
+  return i.type === "BoundCRS"
+    ? !!i.source_crs && b(i.source_crs)
+    : i.type === "GeodeticCRS"
+      ? !i.coordinate_system || i.coordinate_system.subtype !== "Cartesian"
+      : i.type === "GeographicCRS" || i.type === "ProjectedCRS";
+}
+function C(i, e = {}) {
+  if (!i || typeof i != "object") return i;
+  if (i.type === "CompoundCRS") {
+    const a = (i.components || []).find(b);
+    return a ? C(a, e) : e;
+  }
+  return i.type === "BoundCRS"
+    ? (C(i.source_crs, e),
+      i.transformation &&
+        (i.transformation.method && i.transformation.method.name === "NTv2"
+          ? (e.nadgrids = i.transformation.parameters[0].value)
+          : (e.datum_params = i.transformation.parameters.map((a) => a.value))),
+      e)
+    : (Object.keys(i).forEach((a) => {
+        const n = i[a];
+        if (n !== null)
+          switch (a) {
+            case "name":
+              if (e.srsCode) break;
+              ((e.name = n), (e.srsCode = n));
+              break;
+            case "type":
+              n === "GeographicCRS"
+                ? (e.projName = "longlat")
+                : n === "GeodeticCRS"
+                  ? i.coordinate_system &&
+                    i.coordinate_system.subtype === "Cartesian"
+                    ? (e.projName = "geocent")
+                    : (e.projName = "longlat")
+                  : n === "ProjectedCRS" &&
+                    i.conversion &&
+                    i.conversion.method &&
+                    (e.projName = i.conversion.method.name);
+              break;
+            case "datum":
+            case "datum_ensemble":
+              (n.ellipsoid && ((e.ellps = n.ellipsoid.name), L(n, e)),
+                n.prime_meridian &&
+                  (e.from_greenwich =
+                    (n.prime_meridian.longitude * Math.PI) / 180));
+              break;
+            case "ellipsoid":
+              ((e.ellps = n.name), L(n, e));
+              break;
+            case "prime_meridian":
+              e.long0 = ((n.longitude || 0) * Math.PI) / 180;
+              break;
+            case "coordinate_system":
+              if (n.axis) {
+                const f = {
+                    east: "e",
+                    north: "n",
+                    west: "w",
+                    south: "s",
+                    up: "u",
+                    down: "d",
+                    geocentricx: "e",
+                    geocentricy: "n",
+                    geocentricz: "u",
+                  },
+                  r = n.axis.map((o) => f[o.direction.toLowerCase()]);
+                if (
+                  (r.every(Boolean) &&
+                    ((e.axis = r.join("")),
+                    e.axis.length === 2 && (e.axis += "u")),
+                  n.unit)
+                ) {
+                  const { units: o, to_meter: s } = v(n.unit);
+                  ((e.units = o), (e.to_meter = s));
+                } else if (n.axis[0] && n.axis[0].unit) {
+                  const { units: o, to_meter: s } = v(n.axis[0].unit);
+                  ((e.units = o), (e.to_meter = s));
+                }
+              }
+              break;
+            case "id":
+              n.authority && n.code && (e.title = n.authority + ":" + n.code);
+              break;
+            case "conversion":
+              (n.method && n.method.name && (e.projName = n.method.name),
+                n.parameters &&
+                  n.parameters.forEach((f) => {
+                    const r = f.name.toLowerCase().replace(/\s+/g, "_"),
+                      o = f.value;
+                    f.unit && f.unit.conversion_factor
+                      ? (e[r] = o * f.unit.conversion_factor)
+                      : f.unit === "degree"
+                        ? (e[r] = (o * Math.PI) / 180)
+                        : (e[r] = o);
+                  }));
+              break;
+            case "unit":
+              (n.name &&
+                ((e.units = n.name.toLowerCase()),
+                e.units === "metre" && (e.units = "meter")),
+                n.conversion_factor && (e.to_meter = n.conversion_factor));
+              break;
+            case "base_crs":
+              (C(n, e),
+                (e.datumCode = n.id
+                  ? n.id.authority + "_" + n.id.code
+                  : n.name));
+              break;
+          }
+      }),
+      !e.datumCode &&
+        (i.type === "GeographicCRS" || i.type === "GeodeticCRS") &&
+        i.id &&
+        (e.datumCode = i.id.authority + "_" + i.id.code),
+      e.latitude_of_false_origin !== void 0 &&
+        (e.lat0 = e.latitude_of_false_origin),
+      e.longitude_of_false_origin !== void 0 &&
+        (e.long0 = e.longitude_of_false_origin),
+      e.latitude_of_standard_parallel !== void 0 &&
+        ((e.lat0 = e.latitude_of_standard_parallel),
+        (e.lat1 = e.latitude_of_standard_parallel)),
+      e.latitude_of_1st_standard_parallel !== void 0 &&
+        (e.lat1 = e.latitude_of_1st_standard_parallel),
+      e.latitude_of_2nd_standard_parallel !== void 0 &&
+        (e.lat2 = e.latitude_of_2nd_standard_parallel),
+      e.latitude_of_projection_centre !== void 0 &&
+        (e.lat0 = e.latitude_of_projection_centre),
+      e.longitude_of_projection_centre !== void 0 &&
+        (e.longc = e.longitude_of_projection_centre),
+      e.easting_at_false_origin !== void 0 &&
+        (e.x0 = e.easting_at_false_origin),
+      e.northing_at_false_origin !== void 0 &&
+        (e.y0 = e.northing_at_false_origin),
+      e.latitude_of_natural_origin !== void 0 &&
+        (e.lat0 = e.latitude_of_natural_origin),
+      e.longitude_of_natural_origin !== void 0 &&
+        (e.long0 = e.longitude_of_natural_origin),
+      e.longitude_of_origin !== void 0 && (e.long0 = e.longitude_of_origin),
+      e.false_easting !== void 0 && (e.x0 = e.false_easting),
+      e.easting_at_projection_centre && (e.x0 = e.easting_at_projection_centre),
+      e.false_northing !== void 0 && (e.y0 = e.false_northing),
+      e.northing_at_projection_centre &&
+        (e.y0 = e.northing_at_projection_centre),
+      e.standard_parallel_1 !== void 0 && (e.lat1 = e.standard_parallel_1),
+      e.standard_parallel_2 !== void 0 && (e.lat2 = e.standard_parallel_2),
+      e.scale_factor_at_natural_origin !== void 0 &&
+        (e.k0 = e.scale_factor_at_natural_origin),
+      e.scale_factor_at_projection_centre !== void 0 &&
+        (e.k0 = e.scale_factor_at_projection_centre),
+      e.scale_factor_on_pseudo_standard_parallel !== void 0 &&
+        (e.k0 = e.scale_factor_on_pseudo_standard_parallel),
+      e.azimuth !== void 0 && (e.alpha = e.azimuth),
+      e.azimuth_at_projection_centre !== void 0 &&
+        (e.alpha = e.azimuth_at_projection_centre),
+      e.angle_from_rectified_to_skew_grid &&
+        (e.rectified_grid_angle = e.angle_from_rectified_to_skew_grid),
+      e.long0 === void 0 &&
+        e.central_meridian !== void 0 &&
+        (e.long0 = e.central_meridian),
+      e.lat0 === void 0 &&
+        e.latitude_of_origin !== void 0 &&
+        (e.lat0 = e.latitude_of_origin),
+      e.lat0 === void 0 &&
+        e.latitude_of_center !== void 0 &&
+        (e.lat0 = e.latitude_of_center),
+      e.longc === void 0 &&
+        e.longitude_of_center !== void 0 &&
+        (e.longc = e.longitude_of_center),
+      e.k0 === void 0 && e.scale_factor !== void 0 && (e.k0 = e.scale_factor),
+      G(e),
+      e);
+}
+var Y = [
+    "PROJECTEDCRS",
+    "PROJCRS",
+    "GEOGCS",
+    "GEOCCS",
+    "PROJCS",
+    "LOCAL_CS",
+    "GEODCRS",
+    "GEODETICCRS",
+    "GEODETICDATUM",
+    "ENGCRS",
+    "ENGINEERINGCRS",
+  ],
+  q = [
+    "projName",
+    "axis",
+    "units",
+    "to_meter",
+    "datumCode",
+    "datum_params",
+    "nadgrids",
+    "ellps",
+    "from_greenwich",
+    "a",
+    "rf",
+    "sphere",
+    "k0",
+    "x0",
+    "y0",
+    "long0",
+    "longc",
+    "lat0",
+    "lat1",
+    "lat2",
+    "lat_ts",
+    "alpha",
+    "rectified_grid_angle",
+  ];
+function Q(i, e) {
+  var a = e[0],
+    n = e[1];
+  !(a in i) && n in i && ((i[a] = i[n]), e.length === 3 && (i[a] = e[2](i[a])));
+}
+function x(i) {
+  for (var e = Object.keys(i), a = 0, n = e.length; a < n; ++a) {
+    var f = e[a];
+    (Y.indexOf(f) !== -1 && Z(i[f]), typeof i[f] == "object" && x(i[f]));
+  }
+}
+function Z(i) {
+  if (i.AUTHORITY) {
+    var e = Object.keys(i.AUTHORITY)[0];
+    e && e in i.AUTHORITY && (i.title = e + ":" + i.AUTHORITY[e]);
+  }
+  if (
+    (i.type === "GEOGCS"
+      ? (i.projName = "longlat")
+      : i.type === "LOCAL_CS"
+        ? ((i.projName = "identity"), (i.local = !0))
+        : typeof i.PROJECTION == "object"
+          ? (i.projName = Object.keys(i.PROJECTION)[0])
+          : (i.projName = i.PROJECTION),
+    i.AXIS)
+  ) {
+    for (var a = "", n = 0, f = i.AXIS.length; n < f; ++n) {
+      var r = [i.AXIS[n][0].toLowerCase(), i.AXIS[n][1].toLowerCase()];
+      r[0].indexOf("north") !== -1 ||
+      ((r[0] === "y" || r[0] === "lat") && r[1] === "north")
+        ? (a += "n")
+        : r[0].indexOf("south") !== -1 ||
+            ((r[0] === "y" || r[0] === "lat") && r[1] === "south")
+          ? (a += "s")
+          : r[0].indexOf("east") !== -1 ||
+              ((r[0] === "x" || r[0] === "lon") && r[1] === "east")
+            ? (a += "e")
+            : (r[0].indexOf("west") !== -1 ||
+                ((r[0] === "x" || r[0] === "lon") && r[1] === "west")) &&
+              (a += "w");
+    }
+    (a.length === 2 && (a += "u"), a.length === 3 && (i.axis = a));
+  }
+  i.UNIT &&
+    ((i.units = i.UNIT.name.toLowerCase()),
+    i.units === "metre" && (i.units = "meter"),
+    i.UNIT.convert &&
+      (i.type === "GEOGCS"
+        ? i.DATUM &&
+          i.DATUM.SPHEROID &&
+          (i.to_meter = i.UNIT.convert * i.DATUM.SPHEROID.a)
+        : (i.to_meter = i.UNIT.convert)));
+  var o = i.GEOGCS;
+  (i.type === "GEOGCS" && (o = i),
+    o &&
+      (o.PRIMEM && o.PRIMEM.convert && (i.from_greenwich = c(o.PRIMEM.convert)),
+      o.DATUM
+        ? (i.datumCode = o.DATUM.name.toLowerCase())
+        : (i.datumCode = o.name.toLowerCase()),
+      i.datumCode.slice(0, 2) === "d_" && (i.datumCode = i.datumCode.slice(2)),
+      i.datumCode === "new_zealand_1949" && (i.datumCode = "nzgd49"),
+      (i.datumCode === "wgs_1984" ||
+        i.datumCode === "world_geodetic_system_1984") &&
+        (i.PROJECTION === "Mercator_Auxiliary_Sphere" && (i.sphere = !0),
+        (i.datumCode = "wgs84")),
+      i.datumCode === "belge_1972" && (i.datumCode = "rnb72"),
+      o.DATUM &&
+        o.DATUM.SPHEROID &&
+        ((i.ellps = o.DATUM.SPHEROID.name
+          .replace("_19", "")
+          .replace(/[Cc]larke\_18/, "clrk")),
+        i.ellps.toLowerCase().slice(0, 13) === "international" &&
+          (i.ellps = "intl"),
+        (i.a = o.DATUM.SPHEROID.a),
+        (i.rf = parseFloat(o.DATUM.SPHEROID.rf))),
+      o.DATUM && o.DATUM.TOWGS84 && (i.datum_params = o.DATUM.TOWGS84),
+      ~i.datumCode.indexOf("osgb_1936") && (i.datumCode = "osgb36"),
+      ~i.datumCode.indexOf("osni_1952") && (i.datumCode = "osni52"),
+      (~i.datumCode.indexOf("tm65") ||
+        ~i.datumCode.indexOf("geodetic_datum_of_1965")) &&
+        (i.datumCode = "ire65"),
+      i.datumCode === "ch1903+" && (i.datumCode = "ch1903"),
+      ~i.datumCode.indexOf("israel") && (i.datumCode = "isr93")),
+    i.b && !isFinite(i.b) && (i.b = i.a),
+    i.rectified_grid_angle &&
+      (i.rectified_grid_angle = c(i.rectified_grid_angle)));
+  function s(p) {
+    var A = i.to_meter || 1;
+    return p * A;
+  }
+  var m = function (p) {
+      return Q(i, p);
+    },
+    d = [
+      ["standard_parallel_1", "Standard_Parallel_1"],
+      ["standard_parallel_1", "Latitude of 1st standard parallel"],
+      ["standard_parallel_2", "Standard_Parallel_2"],
+      ["standard_parallel_2", "Latitude of 2nd standard parallel"],
+      ["false_easting", "False_Easting"],
+      ["false_easting", "False easting"],
+      ["false-easting", "Easting at false origin"],
+      ["false_northing", "False_Northing"],
+      ["false_northing", "False northing"],
+      ["false_northing", "Northing at false origin"],
+      ["central_meridian", "Central_Meridian"],
+      ["central_meridian", "Longitude of natural origin"],
+      ["central_meridian", "Longitude of false origin"],
+      ["latitude_of_origin", "Latitude_Of_Origin"],
+      ["latitude_of_origin", "Central_Parallel"],
+      ["latitude_of_origin", "Latitude of natural origin"],
+      ["latitude_of_origin", "Latitude of false origin"],
+      ["scale_factor", "Scale_Factor"],
+      ["k0", "scale_factor"],
+      ["latitude_of_center", "Latitude_Of_Center"],
+      ["latitude_of_center", "Latitude_of_center"],
+      ["lat0", "latitude_of_center", c],
+      ["longitude_of_center", "Longitude_Of_Center"],
+      ["longitude_of_center", "Longitude_of_center"],
+      ["longc", "longitude_of_center", c],
+      ["x0", "false_easting", s],
+      ["y0", "false_northing", s],
+      ["long0", "central_meridian", c],
+      ["lat0", "latitude_of_origin", c],
+      ["lat0", "standard_parallel_1", c],
+      ["lat1", "standard_parallel_1", c],
+      ["lat2", "standard_parallel_2", c],
+      ["azimuth", "Azimuth"],
+      ["alpha", "azimuth", c],
+      ["srsCode", "name"],
+    ];
+  (d.forEach(m), G(i));
+}
+function $(i) {
+  if (typeof i == "object") return C(i);
+  const e = B(i);
+  var a = K(i);
+  if (e === "WKT2") {
+    const s = J(a);
+    return C(s);
+  }
+  var n = a[0],
+    f = {};
+  (u(a, f), x(f));
+  var r = f[n];
+  if (n === "COMPD_CS") {
+    var o = r.PROJCS || r.GEOGCS;
+    o &&
+      q.forEach(function (s) {
+        s in o && (r[s] = o[s]);
+      });
+  }
+  return r;
+}
+export { $ as default };

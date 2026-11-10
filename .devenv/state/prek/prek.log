@@ -1,17 +1,17 @@
-2026-11-10T15:18:59.450285Z DEBUG prek: 0.5.5
-2026-11-10T15:18:59.450304Z DEBUG Args: ["/nix/store/l0ggvqg03zd6if8h8qi39r66chdhcf04-prek-0.5.5/bin/prek", "hook-impl", "--hook-dir", "/home/dominikb1888/Semester/snowmap/.git/hooks", "--script-version", "4", "--hook-type=pre-commit", "--config=.pre-commit-config.yaml", "--"]
-2026-11-10T15:18:59.451244Z TRACE Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/xqp1x3qm8j8hxqpddwzp9mg73wvrc4xb-git-2.56.0/libexec/git-core/git -c core.useBuiltinFSMonitor=false diff --name-status -z --no-renames --no-relative --no-ext-diff --ignore-submodules`
-2026-11-10T15:18:59.452190Z DEBUG discover{cwd="/home/dominikb1888/Semester/snowmap"}: Git repository state state=Repo { root: Ok("/home/dominikb1888/Semester/snowmap"), git_dir: "/home/dominikb1888/Semester/snowmap/.git", common_dir: "/home/dominikb1888/Semester/snowmap/.git", hooks_dir: "/home/dominikb1888/Semester/snowmap/.git/hooks" }
-2026-11-10T15:18:59.452255Z TRACE discover{cwd="/home/dominikb1888/Semester/snowmap"}: close time.busy=1.01ms time.idle=5.54µs
-2026-11-10T15:18:59.452346Z TRACE Searching for global config path=/home/dominikb1888/.config/prek/prek.toml
-2026-11-10T15:18:59.452364Z TRACE Global config not found or inaccessible, skipping path=/home/dominikb1888/.config/prek/prek.toml
-2026-11-10T15:18:59.452373Z TRACE Include selectors: ``
-2026-11-10T15:18:59.452378Z TRACE Skip selectors: ``
-2026-11-10T15:18:59.452397Z DEBUG discover{root="/home/dominikb1888/Semester/snowmap" config=Some(".pre-commit-config.yaml") refresh=false}: Loading project configuration path=.pre-commit-config.yaml
-2026-11-10T15:18:59.453185Z TRACE discover{root="/home/dominikb1888/Semester/snowmap" config=Some(".pre-commit-config.yaml") refresh=false}: close time.busy=789µs time.idle=1.42µs
-2026-11-10T15:18:59.453349Z TRACE Checking lock resource="store" path=/home/dominikb1888/Semester/snowmap/.devenv/state/prek/.lock
-2026-11-10T15:18:59.453360Z DEBUG Acquired lock resource="store"
-2026-11-10T15:18:59.453527Z TRACE Released lock path=/home/dominikb1888/Semester/snowmap/.devenv/state/prek/.lock
-2026-11-10T15:18:59.453543Z DEBUG Hooks going to run: ["check-merge-conflicts", "eslint", "prettier"]
-2026-11-10T15:18:59.453549Z TRACE Executing `/nix/store/xqp1x3qm8j8hxqpddwzp9mg73wvrc4xb-git-2.56.0/libexec/git-core/git -c core.useBuiltinFSMonitor=false write-tree`
-2026-11-10T15:18:59.454388Z TRACE Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/xqp1x3qm8j8hxqpddwzp9mg73wvrc4xb-git-2.56.0/libexec/git-core/git -c core.useBuiltinFSMonitor=false diff-index --binary --exit-code --ignore-submodules --no-color --no-ext-diff --no-textconv --no-relative 3104c6e9df1d1a616f799780cb97ede6fe913b1d -- /home/dominikb1888/Semester/snowmap`
+2026-11-10T15:19:51.544077Z DEBUG prek: 0.5.5
+2026-11-10T15:19:51.544112Z DEBUG Args: ["/nix/store/l0ggvqg03zd6if8h8qi39r66chdhcf04-prek-0.5.5/bin/prek", "hook-impl", "--hook-dir", "/home/dominikb1888/Semester/snowmap/.git/hooks", "--script-version", "4", "--hook-type=pre-commit", "--config=.pre-commit-config.yaml", "--"]
+2026-11-10T15:19:51.544294Z TRACE Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/xqp1x3qm8j8hxqpddwzp9mg73wvrc4xb-git-2.56.0/libexec/git-core/git -c core.useBuiltinFSMonitor=false diff --name-status -z --no-renames --no-relative --no-ext-diff --ignore-submodules`
+2026-11-10T15:19:51.545417Z DEBUG discover{cwd="/home/dominikb1888/Semester/snowmap"}: Git repository state state=Repo { root: Ok("/home/dominikb1888/Semester/snowmap"), git_dir: "/home/dominikb1888/Semester/snowmap/.git", common_dir: "/home/dominikb1888/Semester/snowmap/.git", hooks_dir: "/home/dominikb1888/Semester/snowmap/.git/hooks" }
+2026-11-10T15:19:51.545463Z TRACE discover{cwd="/home/dominikb1888/Semester/snowmap"}: close time.busy=1.08ms time.idle=4.67µs
+2026-11-10T15:19:51.545977Z TRACE Searching for global config path=/home/dominikb1888/.config/prek/prek.toml
+2026-11-10T15:19:51.545988Z TRACE Global config not found or inaccessible, skipping path=/home/dominikb1888/.config/prek/prek.toml
+2026-11-10T15:19:51.545996Z TRACE Include selectors: ``
+2026-11-10T15:19:51.546001Z TRACE Skip selectors: ``
+2026-11-10T15:19:51.546020Z DEBUG discover{root="/home/dominikb1888/Semester/snowmap" config=Some(".pre-commit-config.yaml") refresh=false}: Loading project configuration path=.pre-commit-config.yaml
+2026-11-10T15:19:51.546784Z TRACE discover{root="/home/dominikb1888/Semester/snowmap" config=Some(".pre-commit-config.yaml") refresh=false}: close time.busy=766µs time.idle=1.71µs
+2026-11-10T15:19:51.546950Z TRACE Checking lock resource="store" path=/home/dominikb1888/Semester/snowmap/.devenv/state/prek/.lock
+2026-11-10T15:19:51.546960Z DEBUG Acquired lock resource="store"
+2026-11-10T15:19:51.547097Z TRACE Released lock path=/home/dominikb1888/Semester/snowmap/.devenv/state/prek/.lock
+2026-11-10T15:19:51.547108Z DEBUG Hooks going to run: ["check-merge-conflicts", "eslint", "prettier"]
+2026-11-10T15:19:51.547118Z TRACE Executing `/nix/store/xqp1x3qm8j8hxqpddwzp9mg73wvrc4xb-git-2.56.0/libexec/git-core/git -c core.useBuiltinFSMonitor=false write-tree`
+2026-11-10T15:19:51.548582Z TRACE Executing `cd /home/dominikb1888/Semester/snowmap && /nix/store/xqp1x3qm8j8hxqpddwzp9mg73wvrc4xb-git-2.56.0/libexec/git-core/git -c core.useBuiltinFSMonitor=false diff-index --binary --exit-code --ignore-submodules --no-color --no-ext-diff --no-textconv --no-relative d577ded5fdcc5d4c8b833de7832a6aca8fae269c -- /home/dominikb1888/Semester/snowmap`
