@@ -1,5 +1,5 @@
 const longitude = -122.47;
-const latitude = 37.80;
+const latitude = 37.8;
 
 async function json(url) {
   const response = await fetch(url);
@@ -7,7 +7,9 @@ async function json(url) {
   return await response.json();
 }
 
-const station = await json(`https://api.weather.gov/points/${latitude},${longitude}`);
+const station = await json(
+  `https://api.weather.gov/points/${latitude},${longitude}`,
+);
 const forecast = await json(station.properties.forecastHourly);
 
 process.stdout.write(JSON.stringify(forecast));
