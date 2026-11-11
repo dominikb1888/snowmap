@@ -124,6 +124,33 @@ EOF
     echo "✅ Success! Observable Framework files have been integrated."
     echo "👉 Run 'pnpm approve-builds esbuild' followed by 'devenv up' to start."
   '';
+  deploy.exec = ''
+      set -euo pipefail
+
+      echo "Building site..."
+      npm run build
+
+      echo "Preparing isolated git deploy in dist/..."
+      REPO_URL=$(git remote get-url origin)
+      cd dist
+      touch .nojekyll
+
+      rm -rf .git
+      git init -b gh-pages
+      # Prevent prek / global devenv git hooks from injecting files into dist/
+      git config core.hooksPath /dev/null
+      git config user.name "$(git -C .. config user.name || echo 'Deploy Bot')"
+      git config user.email "$(git -C .. config user.email || echo 'deploy@localhost')"
+
+      git add -A
+      git commit --no-verify -m "Deploy build $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+
+      echo "Pushing to gh-pages..."
+      git push -f "$REPO_URL" gh-pages
+
+      rm -rf .git
+      echo "Done! Deployed cleanly to gh-pages."
+    '';
   };
   
   # 2. Automated Testing Environment
