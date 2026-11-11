@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="generator" content="Observable Framework v1.13.4">
+<title>Snowmap</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&amp;display=swap" crossorigin>
+<link rel="preload" as="style" href="./_observablehq/theme-air,near-midnight.b050d634.css">
+<link rel="preload" as="style" href="./_observablehq/stdlib/inputs.f7bf0e12.css">
+<link rel="preload" as="style" href="./_npm/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&amp;display=swap" crossorigin>
+<link rel="stylesheet" type="text/css" href="./_observablehq/theme-air,near-midnight.b050d634.css">
+<link rel="stylesheet" type="text/css" href="./_observablehq/stdlib/inputs.f7bf0e12.css">
+<link rel="stylesheet" type="text/css" href="./_npm/leaflet@1.9.4/dist/leaflet.css">
+<link rel="modulepreload" href="./_observablehq/client.6b2061c5.js">
+<link rel="modulepreload" href="./_observablehq/runtime.13bc3751.js">
+<link rel="modulepreload" href="./_observablehq/stdlib.da506b8f.js">
+<link rel="modulepreload" href="./_npm/leaflet@1.9.4/b6187c6b.js">
+<link rel="modulepreload" href="./_npm/proj4@2.22.0/884140dc.js">
+<link rel="modulepreload" href="./_observablehq/stdlib/inputs.95a632ea.js">
+<link rel="modulepreload" href="./_observablehq/stdlib/xlsx.9273cc72.js">
+<link rel="modulepreload" href="./_npm/htl@1.0.0/11521f02.js">
+<link rel="modulepreload" href="./_npm/isoformat@0.2.1/604cb63b.js">
+<link rel="modulepreload" href="./_npm/exceljs@4.4.0/a2661e1d.js">
+<link rel="modulepreload" href="./_npm/wkt-parser@1.7.0/6c2d3e45.js">
+<link rel="modulepreload" href="./_npm/mgrs@1.0.0/294a7062.js">
+<link rel="icon" href="./_file/observable.1af93621.png" type="image/png" sizes="32x32">
+<script type="module">
+
+import {define} from "./_observablehq/client.6b2061c5.js";
+import {registerFile} from "./_observablehq/stdlib.da506b8f.js";
+
+registerFile("./data/Snowmap.xlsx", {"name":"./data/Snowmap.xlsx","mimeType":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","path":"./_file/data/Snowmap.116cc4fe.xlsx","lastModified":1794309755661,"size":29608});
+
+define({id: "28da8d65", inputs: ["FileAttachment"], outputs: ["workbook"], body: (FileAttachment) => {
+const workbook = FileAttachment("./data/Snowmap.xlsx").xlsx();
+return {workbook};
+}});
+
+define({id: "a5d62292", inputs: ["workbook"], outputs: ["reports"], body: (workbook) => {
+const reports = workbook.sheet("John_Snow_1854_cases", {
+  range: "A:D",
+  headers: true,
+});
+return {reports};
+}});
+
+define({id: "6172983f", outputs: ["L","proj4"], body: async () => {
+const [{default: L}, {default: proj4}] = await Promise.all([import("./_npm/leaflet@1.9.4/b6187c6b.js"), import("./_npm/proj4@2.22.0/884140dc.js")]);
+
+// Define British National Grid (EPSG:27700) projection formula
+proj4.defs(
+  "EPSG:27700",
+  "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +units=m +no_defs",
+);
+return {L,proj4};
+}});
+
+define({id: "0bce3360", inputs: ["L","reports","display"], outputs: ["container","map","ORIGIN_LAT","ORIGIN_LNG","SCALE_X","SCALE_Y","markersGroup","lat","lng"], body: (L,reports,display) => {
+// Create and yield the container element
+const container = document.createElement("div");
+container.style.width = "100%";
+container.style.height = "500px";
+
+const map = L.map(container).setView([51.5133, -0.1364], 16);
+
+// Base silhouettes (no labels)
+L.tileLayer(
+  "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+  {
+    maxZoom: 16,
+    attribution: "Tiles &copy; Esri",
+  },
+).addTo(map);
+
+// Street labels overlay
+L.tileLayer(
+  "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}",
+  {
+    maxZoom: 16,
+  },
+).addTo(map);
+
+setTimeout(() => {
+  map.invalidateSize();
+}, 100);
+
+const ORIGIN_LAT = 51.512;
+const ORIGIN_LNG = -0.138;
+const SCALE_X = 0.00025; // Longitude scaling step per local unit
+const SCALE_Y = 0.00025; // Latitude scaling step per local unit
+
+const markersGroup = L.featureGroup();
+
+let lat, lng;
+
+for (const c of reports) {
+  const localX = Number(c.x ?? c.Easting ?? c.x_coord);
+  const localY = Number(c.y ?? c.Northing ?? c.y_coord);
+
+  if (!isNaN(localX) && !isNaN(localY)) {
+    // Transform local coordinates into Soho WGS84 degrees
+    const lng = ORIGIN_LNG + localX * SCALE_X;
+    const lat = ORIGIN_LAT + localY * SCALE_Y;
+
+    const marker = L.circleMarker([lat, lng], {
+      radius: 4,
+      fillColor: "#d90429",
+      color: "#000000",
+      weight: 0.5,
+      opacity: 0.9,
+      fillOpacity: 0.85,
+    });
+    markersGroup.addLayer(marker);
+  }
+}
+markersGroup.addTo(map);
+
+// 4. Force map resize calculation first, then fit bounds safely
+requestAnimationFrame(() => {
+  map.invalidateSize();
+  const bounds = markersGroup.getBounds();
+  if (bounds.isValid()) {
+    map.fitBounds(bounds, { padding: [20, 20] });
+  }
+});
+
+display(container);
+return {container,map,ORIGIN_LAT,ORIGIN_LNG,SCALE_X,SCALE_Y,markersGroup,lat,lng};
+}});
+
+define({id: "64a21d23", inputs: ["Inputs","reports"], body: (Inputs,reports) => {
+Inputs.table(reports);
+}});
+
+</script>
+</head>
+<body>
+<div id="observablehq-center">
+<aside id="observablehq-toc" data-selector="h1:not(:first-of-type)[id], h2:first-child[id], :not(h1) + h2[id]">
+<nav>
+</nav>
+</aside>
+<main id="observablehq-main" class="observablehq">
+<h1 id="snowmap" tabindex="-1"><a class="observablehq-header-anchor" href="#snowmap">Snowmap</a></h1>
+<div class="observablehq observablehq--block"><!--:28da8d65:--></div>
+<div class="observablehq observablehq--block"><!--:a5d62292:--></div>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<div class="observablehq observablehq--block"><!--:6172983f:--></div>
+<div class="observablehq observablehq--block"><!--:0bce3360:--></div>
+<div class="observablehq observablehq--block"><!--:64a21d23:--></div>
+<pre><code>
+</code></pre>
+</main>
+<footer id="observablehq-footer">
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-11-11T05:53:14">Nov 11, 2026</a>.</div>
+</footer>
+</div>
+</body>
+</html>
