@@ -100,6 +100,180 @@ display(container);
 Inputs.table(reports);
 ```
 
+```html
+<style>
+  @import url("https://googleapis.com");
+
+  .tube-map {
+    font-family: "Railway Sans", "Cabin", "Gill Sans", sans-serif;
+    background: #ffffff;
+    border: 3px solid #003688;
+  }
+  .street-line {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .station-label {
+    font-size: 11px;
+    font-weight: 700;
+    fill: #003688;
+    letter-spacing: 0.04em;
+  }
+  .legend-box {
+    fill: #ffffff;
+    stroke: #003688;
+    stroke-width: 2.5px;
+  }
+</style>
+```
+
+# Soho 1854: Cholera Outbreak Diagram
+
+```js
+// 1. Load your local GeoJSON files via FileAttachment
+const pumps = await FileAttachment("data/pumps.geojson").json();
+const deaths = await FileAttachment("data/deaths.geojson").json();
+// const streets = await FileAttachment("data/soho_streets.geojson").json();
+const streets = JSON.parse("{}");
+```
+
+```js
+// 2. Helper: Snap street coordinates to Harry Beck's 45-degree octilinear grid
+function octilinearLine(coords) {
+  if (coords.length < 2) return coords;
+  const snapped = [coords[0]];
+  for (let i = 1; i < coords.length; i++) {
+    const [x0, y0] = snapped[snapped.length - 1];
+    const [x1, y1] = coords[i];
+    const dx = x1 - x0;
+    const dy = y1 - y0;
+    const angle = Math.atan2(dy, dx);
+    // Round angle to nearest 45 degrees (PI / 4)
+    const snappedAngle = Math.round(angle / (Math.PI / 4)) * (Math.PI / 4);
+    const dist = Math.hypot(dx, dy);
+    snapped.push([
+      x0 + Math.cos(snappedAngle) * dist,
+      y0 + Math.sin(snappedAngle) * dist,
+    ]);
+  }
+  return snapped;
+}
+```
+
+```js
+// 3. Render the D3 SVG Map
+const width = 920;
+const height = 680;
+
+// Official Transport for London (TfL) Line Colors
+const tflColors = {
+  "Oxford Street": "#E32017",   // Central Line Red
+  "Regent Street": "#003688",   // Piccadilly Blue
+  "Broad Street": "#FFD300",    // Circle Line Yellow
+  "Wardour Street": "#00782A",  // District Line Green
+  "Dean Street": "#9B0056",     // Metropolitan Magenta
+  "default": "#B2B7BB"          // Neutral Zone Gray
+};
+//
+// const projection = d3.geoMercator().fitExtent([[60, 60], [width - 60, height - 60]], streets);
+// const pathGenerator = d3.geoPath().projection(projection);
+//
+// const svg = d3.create("svg")
+//   .attr("viewBox", [0, 0, width, height])
+//   .attr("class", "tube-map");
+
+// const streetGroup = svg.append("g");
+// streets.features.forEach(feature => {
+//   const name = feature.properties.name || "default";
+//   const color = tflColors[name] || tflColors.default;
+//   const isMajor = Boolean(tflColors[name]);
+//
+//   // Project to screen coordinates, then snap to 45° angles
+//   const projectedCoords = feature.geometry.coordinates.map(c => projection(c));
+//   const beckCoords = octilinearLine(projectedCoords);
+//
+//   const line = d3.line()
+//     .x(d => d[0])
+//     .y(d => d[1])
+//     .curve(d3.curveBundle.beta(0.85)); // Rounded Tube corner fillets
+//
+//   streetGroup.append("path")
+//     .datum(beckCoords)
+//     .attr("d", line)
+//     .attr("class", "street-line")
+//     .attr("stroke", color)
+//     .attr("stroke-width", isMajor ? 6 : 2.5);
+// });
+//
+// Layer B: Cholera Deaths (TfL Station Ticks / Interchange Circles)
+const deathGroup = svg.append("g");
+deaths.features.forEach(d =>
+  const [x, y] = projection(d.geometry.coordinates);
+  const count = d.properties.Count || d.properties.count || 1;
+
+  if (count >= 5) {
+    // High-mortality buildings styled as Tube Interchange Stations
+    deathGroup.append("circle")
+      .attr("cx", x)
+      .attr("cy", y)
+      .attr("r", Math.min(4 + count * 0.4, 11))
+      .attr("fill", "#ffffff")
+      .attr("stroke", "#000000")
+      .attr("stroke-width", 2.5);
+  } else {
+    // Minor deaths styled as classic Tube line ticks
+    deathGroup.append("rect")
+      .attr("x", x - 2)
+      .attr("y", y - 5)
+      .attr("width", 4)
+      .attr("height", 10)
+      .attr("fill", "#111111");
+  }
+});
+
+// Layer C: Water Pumps (TfL Roundels)
+const pumpGroup = svg.append("g");
+pumps.features.forEach(p => {
+  const [x, y] = projection(p.geometry.coordinates);
+  const isBroadSt = (p.properties.name || "").toLowerCase().includes("broad");
+  const r = isBroadSt ? 14 : 9;
+
+  const roundel = pumpGroup.append("g")
+    .attr("transform", `translate(${x}, ${y})`);
+
+  // Red Outer Ring
+  roundel.append("circle")
+    .attr("r", r)
+    .attr("fill", "#ffffff")
+    .attr("stroke", "#E32017")
+    .attr("stroke-width", isBroadSt ? 4.5 : 3);
+
+  // Horizontal Blue Bar
+  roundel.append("rect")
+    .attr("x", -r * 1.25)
+    .attr("y", -r * 0.28)
+    .attr("width", r * 2.5)
+    .attr("height", r * 0.56)
+    .attr("fill", "#003688");
+
+  if (isBroadSt) {
+    roundel.append("text")
+      .attr("x", r + 8)
+      .attr("y", 4)
+      .attr("class", "station-label")
+      .text("BROAD ST PUMP");
+  }
+});
+
+// Layer D: Tube-Style Legend Box
+const legend = svg.append("g").attr("transform", `translate(${width - 240}, ${height - 155})`);
+legend.append("rect").attr("width", 215).attr("height", 130).attr("class", "legend-box");
+legend.append("text").attr("x", 14).attr("y", 24).attr("class", "station-label").text("1854 SOHO OUTBREAK");
+
+display(svg.node());
+```
+
 ```
 
 ```

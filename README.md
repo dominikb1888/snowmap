@@ -1,5 +1,13 @@
 # Snowmap
 
+## Goals
+
+- Build snowmap from scratch. This means creating custom vectors for the map including a custom font.
+- Make it use a Gill/Johnston Sans
+- Look and feel of London Underground map
+
+## Observable Framework
+
 This is an [Observable Framework](https://observablehq.com/framework/) app. To install the required dependencies, run:
 
 ```
